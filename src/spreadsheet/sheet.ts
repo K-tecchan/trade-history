@@ -24,6 +24,23 @@ const header = [
   '金額/損益',
 ];
 
+type TradeData = {
+  約定日: string;
+  銘柄: string;
+  銘柄コード: string;
+  市場: string;
+  取引: string;
+  期限: string;
+  預り: string;
+  課税: string;
+  数量: string;
+  単価: string;
+  手数料: string;
+  税額: string;
+  受渡日: string;
+  '金額/損益': string;
+};
+
 export class Sheet {
   doc: GoogleSpreadsheetType;
   sheet: GoogleSpreadsheetWorksheetType;
@@ -40,15 +57,14 @@ export class Sheet {
     });
 
     await this.doc.loadInfo();
-    this.sheet = this.doc.sheetsByIndex[1];
+    this.sheet = this.doc.sheetsByIndex[0];
   }
 
   async setHeader() {
     await this.sheet.setHeaderRow(header);
   }
 
-  // 本来は引数でデータを受け取る
-  async addData(datas) {
+  async addData(datas: TradeData[]) {
     await this.sheet.addRows(datas);
   }
 }
