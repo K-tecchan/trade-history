@@ -23,7 +23,7 @@ export class Scraping {
     this.id = process.env.ID || 'id';
     this.password = process.env.PASSWORD || 'password';
     this.time = 50;
-
+    // ↓はこうじゃなくて、実行するときに引数で受け取ったほうがいいかも
     [, , this.year, this.month, this.day] = process.argv;
   }
 
