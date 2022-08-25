@@ -9,24 +9,30 @@ export class Scraping {
   id: string;
   password: string;
   time: number;
+
   // コマンドラインでcsvで受け取りたい期間の始め部分指定. 終わりは実行日
   year: string;
   month: string;
   day: string;
 
+  // @type/puppeteerから持ってきた型
   browser: BrowserType;
   page: PageType;
 
-  constructor() {
+  constructor(year: string, month: string, day: string) {
     // undefinedの回避. もう少しスマートなやり方考える?
     this.url = process.env.PAGE_URL || 'https://www.google.com';
     this.id = process.env.ID || 'id';
     this.password = process.env.PASSWORD || 'password';
     this.time = 50;
-    // ↓はこうじゃなくて、実行するときに引数で受け取ったほうがいいかも
-    [, , this.year, this.month, this.day] = process.argv;
+
+    // csvの始め部分
+    this.year = year;
+    this.month = month;
+    this.day = day;
   }
 
+  // 非同期処理なのでconstructorから分離
   async init() {
     this.browser = await puppeteer.launch({
       headless: false,
