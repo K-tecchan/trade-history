@@ -44,7 +44,7 @@ export class Scraping {
   }
 
   // 目的のページまで移動
-  private async openPage() {
+  async #openPage() {
     // マイページログイン
     await this.page.goto(this.url);
     await this.page.type('input[name=use_id]', this.id, { delay: this.time });
