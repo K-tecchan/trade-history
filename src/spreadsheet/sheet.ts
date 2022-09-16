@@ -1,6 +1,6 @@
 require('dotenv').config();
 const { GoogleSpreadsheet } = require('google-spreadsheet');
-import type {
+import {
   GoogleSpreadsheetWorksheet as GoogleSpreadsheetWorksheetType,
   GoogleSpreadsheet as GoogleSpreadsheetType,
 } from 'google-spreadsheet';
@@ -42,29 +42,32 @@ type TradeData = {
 };
 
 export class Sheet {
-  doc: GoogleSpreadsheetType;
-  sheet: GoogleSpreadsheetWorksheetType;
+  doc: GoogleSpreadsheetType = new GoogleSpreadsheet(SPREADSHEET_KEY);
+  worksheet: GoogleSpreadsheetWorksheetType;
 
-  constructor() {
-    this.doc = new GoogleSpreadsheet(SPREADSHEET_KEY);
+  // クラス初期化時に非同期処理をしたいので、constructorの代わり
+  static async build(): Promise<Sheet> {
+    const sheet = new Sheet();
+    await this.#loadSheetInfo(sheet);
+    return sheet
   }
 
-  // 非同期処理はconstructorに使えないらしいので分離
-  async init() {
-    await this.doc.useServiceAccountAuth({
+  // スプレッドシートの指定したシートを開く
+  static async #loadSheetInfo(sheet: Sheet): Promise<void> {
+    await sheet.doc.useServiceAccountAuth({
       client_email: CREDIT.client_email,
       private_key: CREDIT.private_key,
     });
-
-    await this.doc.loadInfo();
-    this.sheet = this.doc.sheetsByIndex[0];
+    await sheet.doc.loadInfo();
+    // 0なら1枚目を開く.2枚目を開きたいときは1を指定,3枚目なら2, ...
+    sheet.worksheet = sheet.doc.sheetsByIndex[0];
   }
 
   async setHeader() {
-    await this.sheet.setHeaderRow(header);
+    await this.worksheet.setHeaderRow(header);
   }
 
   async addData(datas: TradeData[]) {
-    await this.sheet.addRows(datas);
+    await this.worksheet.addRows(datas);
   }
 }

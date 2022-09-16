@@ -1,8 +1,7 @@
 import { Sheet } from "./spreadsheet/sheet";
 
 const test = async () => {
-  const sheet = new Sheet();
-  await sheet.init();
+  const sheet: Sheet = await Sheet.build();
   await sheet.setHeader();
   // todo ↓この関数にcsvのデータ入れて書き込んでもらう
   await sheet.addData([]);
