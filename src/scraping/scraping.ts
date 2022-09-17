@@ -5,10 +5,10 @@ const puppeteer = require('puppeteer-core');
 import type { Browser as BrowserType, Page as PageType } from 'puppeteer';
 
 export class Scraping {
-  url: string;
-  id: string;
-  password: string;
-  time: number;
+  url: string = process.env.PAGE_URL || 'https://www.google.com';
+  id: string  = process.env.ID || 'id';
+  password: string = process.env.PASSWORD || 'password';
+  time: number = 50;
 
   // コマンドラインでcsvで受け取りたい期間の始め部分指定. 終わりは実行日
   year: string;
@@ -19,28 +19,23 @@ export class Scraping {
   browser: BrowserType;
   page: PageType;
 
-  constructor(year: string, month: string, day: string) {
-    // undefinedの回避. もう少しスマートなやり方考える?
-    this.url = process.env.PAGE_URL || 'https://www.google.com';
-    this.id = process.env.ID || 'id';
-    this.password = process.env.PASSWORD || 'password';
-    this.time = 50;
+  static async build(year: string, month: string, day: string): Promise<Scraping> {
+    const scraping = new Scraping();
+    scraping.year = year;
+    scraping.month = month;
+    scraping.day = day;
+    await this.#setBrowser(scraping);
 
-    // csvの始め部分
-    this.year = year;
-    this.month = month;
-    this.day = day;
+    return scraping
   }
 
-  // 非同期処理なのでconstructorから分離
-  async init() {
-    this.browser = await puppeteer.launch({
+  static async #setBrowser(scraping: Scraping) {
+    scraping.browser = await puppeteer.launch({
       headless: false,
       executablePath: process.env.BROWSER_PATH,
       slowMo: 50,
     });
-
-    this.page = await this.browser.newPage();
+    scraping.page = await scraping.browser.newPage();
   }
 
   // 目的のページまで移動
