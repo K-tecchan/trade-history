@@ -1,6 +1,6 @@
 require('dotenv').config();
 const { GoogleSpreadsheet } = require('google-spreadsheet');
-import {
+import type {
   GoogleSpreadsheetWorksheet as GoogleSpreadsheetWorksheetType,
   GoogleSpreadsheet as GoogleSpreadsheetType,
 } from 'google-spreadsheet';

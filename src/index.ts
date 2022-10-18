@@ -1,3 +1,4 @@
+import { Scraping } from "./scraping/scraping";
 import { Sheet } from "./spreadsheet/sheet";
 
 const test = async () => {
